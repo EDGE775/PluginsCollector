@@ -15,6 +15,7 @@ namespace PluginsCollector
 {
     public class Module : IExternalModule
     {
+        public static string assembly = "";
         public Result Close()
         {
             return Result.Succeeded;
@@ -30,26 +31,66 @@ namespace PluginsCollector
 #if Revit2018
             try
             {
-                    MainWindowHandle = WindowHandleSearch.MainWindowHandle.Handle;
+                MainWindowHandle = WindowHandleSearch.MainWindowHandle.Handle;
             }
-                catch (Exception e) 
+            catch (Exception e)
             {
                 PrintError(e);
             }
 #endif
             #endregion
-            RibbonPanel panel = application.CreateRibbonPanel(tabName, "Plugins Collector");
+            RibbonPanel panel = application.CreateRibbonPanel(tabName, "PluginsCollector");
             PulldownButtonData pullDownData = new PulldownButtonData("Плагины", "Плагины");
             PulldownButton pullDown = panel.AddItem(pullDownData) as PulldownButton;
             pullDown.LargeImage = new BitmapImage(new Uri(new Source.Source(Common.Collections.Icon.PluginsCollector).Value));
-            string assembly = Assembly.GetExecutingAssembly().Location.Split(new string[] { "\\" }, StringSplitOptions.None).Last().Split('.').First();
+            assembly = Assembly.GetExecutingAssembly().Location.Split(new string[] { "\\" }, StringSplitOptions.None).Last().Split('.').First();
+
             AddPushButtonData(
                 "Отсоединение элементов",
                 "Отсоединение\nэлементов",
                 "Отсоединяет некорректно объединённе элементы, которые не пересекаются",
-                string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.UnjoinGeometryCommand"), 
-                pullDown, 
+                string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.UnjoinGeometryCommand"),
+                pullDown,
                 new Source.Source(Common.Collections.Icon.UnjoinGeometry));
+            AddPushButtonData(
+                 "Починить отверстия КР",
+                 "Починить\nотверстия КР",
+                 "Производит починку отверстий без вырезания арматуры, которые начали прорезать армирование по площади",
+                 string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.FixHolesCommand"),
+                 pullDown,
+                 new Source.Source(Common.Collections.Icon.FixHoles));
+            AddPushButtonData(
+                 "Заполнить параметры INGD КР",
+                 "Заполнить\nпараметры INGD КР",
+                 "Производит заполнение параметров по стандарту Инграда",
+                 string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.INGDParamCommand"),
+                 pullDown,
+                 new Source.Source(Common.Collections.Icon.INGDParamCommand));
+            AddPushButtonData(
+                 "Заполнить параметры ABS КР",
+                 "Заполнить\nпараметры ABS КР",
+                 "Производит заполнение параметров по стандарту Абсолют",
+                 string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.ABSParamKRCommand"),
+                 pullDown,
+                 new Source.Source(Common.Collections.Icon.ABSParamKRCommand));
+            AddPushButtonData(
+                 "Заполнить параметры ABS АР",
+                 "Заполнить\nпараметры ABS АР",
+                 "Производит заполнение параметров по стандарту Абсолют",
+                 string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.ABSParamARCommand"),
+                 pullDown,
+                 new Source.Source(Common.Collections.Icon.ABSParamARCommand));
+            AddPushButtonData(
+                 "Копирование параметров проекта",
+                 "Копирование параметров\nпроекта",
+                 "Производит копирование параметров проекта из файла, содержащего сведения о проекте.\n" +
+                 "Для копирования параметров необходимо открыть исходный файл или подгрузить его как связь.",
+                 string.Format("{0}.{1}", assembly, "Commands.ExternalCommands.CopyProjectParamsCommand"),
+                 pullDown,
+                 new Source.Source(Common.Collections.Icon.CopyProjectParamsCommand));
+
+
+
             return Result.Succeeded;
         }
         private void AddPushButtonData(string name, string text, string description, string className, RibbonPanel panel, Source.Source imageSource, bool avclass, string url = null)

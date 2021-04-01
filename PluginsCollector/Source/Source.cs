@@ -23,6 +23,21 @@ namespace PluginsCollector.Source
                 case Icon.UnjoinGeometry:
                     Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
                     break;
+                case Icon.FixHoles:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.INGDParamCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.ABSParamKRCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.ABSParamARCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.CopyProjectParamsCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
                 default:
                     throw new Exception("Undefined icon!");
             }

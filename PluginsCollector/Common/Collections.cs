@@ -12,6 +12,6 @@ namespace PluginsCollector.Common
         /// Спискок иконок для работы класса <see cref="PluginsCollector.Source.Source"/>.
         /// Сделано для ускорения процесса обращения к элементам внутри папки Source.
         /// </summary>
-        public enum Icon { PluginsCollector, UnjoinGeometry }
+        public enum Icon { PluginsCollector, UnjoinGeometry, FixHoles, INGDParamCommand, ABSParamKRCommand, ABSParamARCommand, CopyProjectParamsCommand }
     }
 }

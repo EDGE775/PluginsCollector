@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using ParamManager.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,54 +26,66 @@ namespace PluginsCollector.Commands.ExternalCommands
                 foreach (FailureMessage mess in messages)
                 {
                     String description = mess.GetDescriptionText();
-                    if (description.Contains("Выделенные элементы объединены, но они не пересекаются")
-                       || description.Contains("Выделенные стены прикреплены к выделенным целевым элементам, но не находят их"))
+                    if (description.Contains("Выделенные элементы объединены, но они не пересекаются"))
                     {
                         indexUnjoin++;
                         List<ElementId> failingElems = mess.GetFailingElements().ToList();
                         elemsDictToUnjoin.Add(indexUnjoin, failingElems);
                     }
                 }
-
-                using (Transaction t = new Transaction(doc))
+                int max = elemsDictToUnjoin.Keys.Count();
+                string format = "{0} из " + max.ToString() + " элементов обработано";
+                using (Progress_Single pb = new Progress_Single("Отсоединение элементов", format, max))
                 {
-                    t.Start("Отсоединение элементов");
-                    int counterUnj = 0;
-                    int faultCounterUnj = 0;
-                    Print("Начинаю отсоединение элементов ↑", KPLN_Loader.Preferences.MessageType.Header);
-                    foreach (int key in elemsDictToUnjoin.Keys)
+                    using (Transaction t = new Transaction(doc))
                     {
-                        List<ElementId> unjElems = elemsDictToUnjoin[key];
-                        Element elem1 = doc.GetElement(unjElems[0]);
-                        Element elem2 = doc.GetElement(unjElems[1]);
-                        if (JoinGeometryUtils.AreElementsJoined(doc, elem1, elem2))
+                        t.Start("Отсоединение элементов");
+                        int counterUnj = 0;
+                        int faultCounterUnj = 0;
+                        Print("Начинаю отсоединение элементов. Может занять продолжительное время ↑", KPLN_Loader.Preferences.MessageType.Header);
+                        foreach (int key in elemsDictToUnjoin.Keys)
                         {
-                            JoinGeometryUtils.UnjoinGeometry(doc, elem1, elem2);
-                            doc.Regenerate();
+                            pb.Increment();
+                            List<ElementId> unjElems = elemsDictToUnjoin[key];
+                            Element elem1 = doc.GetElement(unjElems[0]);
+                            Element elem2 = doc.GetElement(unjElems[1]);
                             if (JoinGeometryUtils.AreElementsJoined(doc, elem1, elem2))
                             {
-                                Print(string.Format("Не удалось отсоединить элементы: {0} id:{1} и {2} id:{3}", 
-                                    elem1.Name, 
-                                    elem1.Id.IntegerValue,
-                                    elem2.Name, 
-                                    elem2.Id.IntegerValue
-                                    ), 
-                                    KPLN_Loader.Preferences.MessageType.System_Regular);
-                                faultCounterUnj++;
-                            }
-                            else
-                            {
-                                counterUnj++;
+                                try
+                                {
+                                    JoinGeometryUtils.UnjoinGeometry(doc, elem1, elem2);
+                                    doc.Regenerate();
+                                }
+                                catch (Exception e)
+                                {
+                                    PrintError(e);
+                                }
+
+                                if (JoinGeometryUtils.AreElementsJoined(doc, elem1, elem2))
+                                {
+                                    Print(string.Format("Не удалось отсоединить элементы: {0} id:{1} и {2} id:{3}",
+                                        elem1.Name,
+                                        elem1.Id.IntegerValue,
+                                        elem2.Name,
+                                        elem2.Id.IntegerValue
+                                        ),
+                                        KPLN_Loader.Preferences.MessageType.System_Regular);
+                                    faultCounterUnj++;
+                                }
+                                else
+                                {
+                                    counterUnj++;
+                                }
                             }
                         }
+
+                        Print(string.Format("Обработано конфликтов: {0}", counterUnj),
+                            KPLN_Loader.Preferences.MessageType.System_OK);
+                        Print(string.Format("Не удалось обработать конфликтов: {0}", faultCounterUnj),
+                            KPLN_Loader.Preferences.MessageType.System_OK);
+
+                        t.Commit();
                     }
-
-                    Print(string.Format("Обработано конфликтов: {0}", counterUnj),
-                        KPLN_Loader.Preferences.MessageType.System_OK);
-                    Print(string.Format("Не удалось обработать конфликтов: {0}", faultCounterUnj),
-                        KPLN_Loader.Preferences.MessageType.System_OK);
-
-                    t.Commit();
                 }
                 return Result.Succeeded;
             }
