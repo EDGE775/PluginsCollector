@@ -86,21 +86,42 @@
     </When>
   </Choose>
   <ItemGroup>
-    <Compile Include="Commands\ExecutableCommands\ExecutableCommandExample.cs" />
+    <Compile Include="Commands\ExecutableCommands\OverrideGraphicsByIdCommand.cs" />
     <Compile Include="Commands\ExternalCommands\ABSParamARCommand.cs" />
     <Compile Include="Commands\ExternalCommands\ABSParamKRCommand.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\GetVolumeAction.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\SectionMappingAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\OverrideAllViewsAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\TypeOfWallAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\StandartOverrideSingleViewAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\OverrideSingleViewAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\GetVolumeAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\SectionMappingAction.cs" />
+    <Compile Include="Commands\ExternalCommands\AddLoaderCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\CopyParamValuesCommand.cs" />
     <Compile Include="Commands\ExternalCommands\CopyProjectParamsCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\DIVFixRebarImagesCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\LEVELParamKRCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\DSTGParamKRCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\MTSCParamKRCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\OverrideGraphicsByIdOpenForm.cs" />
+    <Compile Include="Commands\ExternalCommands\SetElementIdCommand.cs" />
     <Compile Include="Commands\ExternalCommands\FixHolesCommand.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\FloorNumberUnderLevelAction.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\FloorNumberOnLevelAction.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\GroupOfConstrAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\FloorNumberUnderLevelAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\FloorNumberOnLevelAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\GroupOfConstrAction.cs" />
     <Compile Include="Commands\ExternalCommands\INGDParamCommand.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\MarkMappingAction.cs" />
-    <Compile Include="Commands\ExternalCommands\Actions\ParamAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\MarkMappingAction.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\ParamAction.cs" />
     <Compile Include="Commands\ExternalCommands\UnjoinGeometryCommand.cs" />
     <Compile Include="Common\Collections.cs" />
+    <Compile Include="Forms\AskingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AskingForm.Designer.cs">
+      <DependentUpon>AskingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoadedModulesForm.xaml.cs">
+      <DependentUpon>LoadedModulesForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Progress_Single.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,15 +135,33 @@
     <Compile Include="Tools\GeometryUtils.cs" />
     <Compile Include="Tools\LevelUtils.cs" />
     <Compile Include="Tools\SettingsUtils.cs" />
+    <Compile Include="Tools\ViewUtils.cs" />
     <Compile Include="Tools\WindowHandleSearch.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Source\ImageData\check.png" />
+    <Content Include="Source\ImageData\CopyProjectParams.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Source\ImageData\pick.png" />
     <Content Include="Source\ImageData\PluginsCollector.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Source\ImageData\toolBox.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\AskingForm.resx">
+      <DependentUpon>AskingForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Forms\LoadedModulesForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

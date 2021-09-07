@@ -55,6 +55,12 @@ namespace PluginsCollector.Commands.ExternalCommands
                     .Cast<ProjectInfo>()
                     .ToList()[0];
 
+                List<GlobalParameter> baseGlobalParams = GlobalParametersManager
+                    .GetAllGlobalParameters(baseDoc)
+                    .Select(x => baseDoc.GetElement(x) as GlobalParameter)
+                    .Where(x => x.GetDefinition().Name.Contains("Угол поворота Севера"))
+                    .ToList();
+
                 List<Parameter> baseParameters = new List<Parameter>();
                 baseParameters.Add(baseInfo.LookupParameter("SHT_Абсолютная отметка"));
                 baseParameters.Add(baseInfo.LookupParameter("SHT_Вид строительства"));
@@ -86,6 +92,18 @@ namespace PluginsCollector.Commands.ExternalCommands
                         }
                     }
 
+                    foreach (GlobalParameter parameter in baseGlobalParams)
+                    {
+                        if (copyingGlobalParams(parameter, currentDoc))
+                        {
+                            counter++;
+                        }
+                        else
+                        {
+                            falseCounter++;
+                        }
+                    }
+
                     Print(string.Format("Скопировано параметров: {0}, не скопировано: {1}", counter, falseCounter), KPLN_Loader.Preferences.MessageType.Success);
                     t.Commit();
                 }
@@ -98,7 +116,36 @@ namespace PluginsCollector.Commands.ExternalCommands
             }
         }
 
-        public bool copyingParams(Parameter param, ProjectInfo currentInfo)
+        public bool copyingGlobalParams(GlobalParameter param, Document currentDoc)
+        {
+            bool check = false;
+            if (param == null)
+            {
+                return check;
+            }
+            string paramName = param.GetDefinition().Name;
+            try
+            {
+                ParameterValue paramValue = param.GetValue();
+                if (paramValue == null)
+                {
+                    Print("Не скопирован параметр: " + paramName + ", т.к. он пуст.", KPLN_Loader.Preferences.MessageType.Code);
+                    return check;
+                }
+                ElementId targetGlobalParamId = GlobalParametersManager.FindByName(currentDoc, paramName);
+                GlobalParameter targetGlobalParam = currentDoc.GetElement(targetGlobalParamId) as GlobalParameter;
+                targetGlobalParam.SetValue(paramValue);
+                Print(string.Format("Параметру: \"{0}\" присвоено значение: \"{1}\"", paramName, Math.Round((paramValue as DoubleParameterValue).Value * 57.2957795D)), KPLN_Loader.Preferences.MessageType.Code);
+                check = true;
+            }
+            catch (Exception)
+            {
+                Print(string.Format("Не удалось присвоить значение параметру: \"{0}\". Возможно, в файле: \"{1}\" данный параметр отсутствует.", paramName, currentDoc.Title), KPLN_Loader.Preferences.MessageType.Error);
+            }
+            return check;
+        }
+
+        public bool copyingParams(Parameter param, Element currentInfo)
         {
             bool check = false;
             if (param == null || currentInfo == null)

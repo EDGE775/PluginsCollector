@@ -16,7 +16,7 @@ namespace PluginsCollector.Commands.ExternalCommands
         private List<Element> elems;
         private Document doc;
 
-        public MarkMappingAction (Document doc, List<Element> elems, string markParamName)
+        public MarkMappingAction(Document doc, List<Element> elems, string markParamName)
         {
             this.doc = doc;
             this.elems = elems;
@@ -35,10 +35,18 @@ namespace PluginsCollector.Commands.ExternalCommands
 
                     Parameter targetMarkParam = elem.LookupParameter(markParamName);
 
-                    if (targetMarkParam != null)
+                    try
                     {
                         targetMarkParam.Set(mark);
                     }
+                    catch (Exception)
+                    {
+                        Print(string.Format("Не удалось скопировать Марку в параметр {0} у элемента: {1} с Id: {2}", markParamName, elem.Name, elem.Id.IntegerValue), KPLN_Loader.Preferences.MessageType.Warning);
+                    }
+                }
+                else
+                {
+                    //Print(string.Format("Не заполнена Марка у элемента: {0} с Id: {1}", elem.Name, elem.Id.IntegerValue), KPLN_Loader.Preferences.MessageType.Warning);
                 }
             }
             return true;

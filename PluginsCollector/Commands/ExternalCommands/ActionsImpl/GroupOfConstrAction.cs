@@ -16,21 +16,22 @@ namespace PluginsCollector.Commands.ExternalCommands
         private List<Element> elems;
         private Document doc;
         private Dictionary<string, string> marksBase = new Dictionary<string, string>();
+        private string fileName;
 
-        public GroupOfConstrAction(Document doc, List<Element> elems, string paramNameGroupConstr)
+        public GroupOfConstrAction(Document doc, List<Element> elems, string paramNameGroupConstr, string fileName)
         {
             this.doc = doc;
             this.elems = elems;
             this.paramNameGroupConstr = paramNameGroupConstr;
+            this.fileName = fileName;
         }
 
         public bool execute()
         {
-            string txtFile = SettingsUtils.CheckOrCreateSettings();
-            Print(txtFile, KPLN_Loader.Preferences.MessageType.Regular);
-            if (!System.IO.File.Exists(txtFile))
+            string txtFile = SettingsUtils.checkParametrizationSettings(fileName);
+            if (txtFile == null)
             {
-                Print("Не найден файл " + txtFile, KPLN_Loader.Preferences.MessageType.Error);
+                Print(string.Format("Файл настроек \"{0}\" не найден!", txtFile), KPLN_Loader.Preferences.MessageType.Error);
                 return false;
             }
 
@@ -74,7 +75,7 @@ namespace PluginsCollector.Commands.ExternalCommands
 
         public string name()
         {
-            return "Заполнение параметра группа конструкции";
+            return string.Format("Заполнение параметра группа конструкции из файла: {0}", fileName);
         }
     }
 }

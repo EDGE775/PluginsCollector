@@ -22,17 +22,34 @@ namespace PluginsCollector.Commands.ExternalCommands
                 Document doc = commandData.Application.ActiveUIDocument.Document;
                 List<FailureMessage> messages = doc.GetWarnings().ToList();
                 Dictionary<int, List<ElementId>> elemsDictToUnjoin = new Dictionary<int, List<ElementId>>();
+                List<ElementId> elemsIds = new List<ElementId>();
                 int indexUnjoin = 0;
                 foreach (FailureMessage mess in messages)
                 {
-                    String description = mess.GetDescriptionText();
+                    string description = mess.GetDescriptionText();
                     if (description.Contains("Выделенные элементы объединены, но они не пересекаются"))
                     {
                         indexUnjoin++;
                         List<ElementId> failingElems = mess.GetFailingElements().ToList();
                         elemsDictToUnjoin.Add(indexUnjoin, failingElems);
                     }
+                    if (description.Contains("Выделенные перекрытия пересекаются"))
+                    {
+                        List<ElementId> failingElems = mess.GetFailingElements().ToList();
+                        elemsIds.AddRange(failingElems);
+                    }
                 }
+
+                if (elemsIds.Count > 0)
+                {
+                    Print("Элементы с предупреждением: \"Выделенные перекрытия пересекаются\"", KPLN_Loader.Preferences.MessageType.Header);
+                    foreach (ElementId elemId in elemsIds)
+                    {
+                        Element elem = doc.GetElement(elemId);
+                        Print(string.Format("{0} : {1}", elem.Name, elem.Id), KPLN_Loader.Preferences.MessageType.Regular);
+                    }
+                }
+
                 int max = elemsDictToUnjoin.Keys.Count();
                 string format = "{0} из " + max.ToString() + " элементов обработано";
                 using (Progress_Single pb = new Progress_Single("Отсоединение элементов", format, max))

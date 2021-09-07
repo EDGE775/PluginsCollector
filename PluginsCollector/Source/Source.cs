@@ -36,6 +36,30 @@ namespace PluginsCollector.Source
                     Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
                     break;
                 case Icon.CopyProjectParamsCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\CopyProjectParams.png");
+                    break;
+                case Icon.SetElementIdCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.OverrideGraphicsByIdOpenForm:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.MTSCParamKRCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.DSTGParamKRCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.LEVELParamKRCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.CopyParamValuesCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.AddLoaderCommand:
+                    Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
+                    break;
+                case Icon.DIVFixRebarImagesCommand:
                     Value = Path.Combine(AssemblyPath, @"Source\ImageData\PluginsCollector.png");
                     break;
                 default:

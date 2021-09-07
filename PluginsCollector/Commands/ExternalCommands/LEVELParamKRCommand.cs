@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.UI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Autodesk.Revit.DB; //для работы с элементами модели Revit
-using Autodesk.Revit.UI; //для работы с элементами интерфейса
-using PluginsCollector.Tools;
 using static KPLN_Loader.Output.Output;
-using Autodesk.Revit.DB.Architecture;
 
 namespace PluginsCollector.Commands.ExternalCommands
 {
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    class ABSParamKRCommand : IExternalCommand
+    class LEVELParamKRCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -22,23 +21,25 @@ namespace PluginsCollector.Commands.ExternalCommands
             List<Element> elemsOnLevel = new List<Element>();
             List<Element> elemsUnderLevel = new List<Element>();
             List<Element> allElems = new List<Element>();
-            List<Element> stairsElems = new List<Element>();
+            List<Element> walls = new List<Element>();
 
             List<Wall> wallsOnLevel = new FilteredElementCollector(doc)
                 .OfClass(typeof(Wall))
                 .Cast<Wall>()
                 .Where(x => x.Name.StartsWith("00_"))
-                .Where(x => !x.Name.ToLower().Contains("перепад") || !x.Name.ToLower().Contains("балк"))
+                .Where(x => !x.Name.ToLower().Contains("перепад") || !x.Name.ToLower().Contains("перекрытие"))
                 .ToList();
             elemsOnLevel.AddRange(wallsOnLevel);
+            walls.AddRange(wallsOnLevel);
 
             List<Wall> wallsUnderLevel = new FilteredElementCollector(doc)
                 .OfClass(typeof(Wall))
                 .Cast<Wall>()
                 .Where(x => x.Name.StartsWith("00_"))
-                .Where(x => x.Name.ToLower().Contains("перепад") || x.Name.ToLower().Contains("балк"))
+                .Where(x => x.Name.ToLower().Contains("перепад") || x.Name.ToLower().Contains("перекрытие"))
                 .ToList();
             elemsUnderLevel.AddRange(wallsUnderLevel);
+            walls.AddRange(wallsUnderLevel);
 
             List<Floor> floorsUnderLevel = new FilteredElementCollector(doc)
                 .OfClass(typeof(Floor))
@@ -76,14 +77,12 @@ namespace PluginsCollector.Commands.ExternalCommands
                 .Cast<StairsRun>()
                 .ToList();
             elemsOnLevel.AddRange(stairsRun);
-            stairsElems.AddRange(stairsRun);
 
             List<StairsLanding> stairsLanding = new FilteredElementCollector(doc)
                 .OfClass(typeof(StairsLanding))
                 .Cast<StairsLanding>()
                 .ToList();
             elemsOnLevel.AddRange(stairsLanding);
-            stairsElems.AddRange(stairsLanding);
 
             List<FamilyInstance> columns = new FilteredElementCollector(doc)
                 .OfClass(typeof(FamilyInstance))
@@ -123,17 +122,17 @@ namespace PluginsCollector.Commands.ExternalCommands
             allElems.AddRange(elemsOnLevel);
             allElems.AddRange(elemsUnderLevel);
 
+            List<ParamAction> actions = new List<ParamAction>();
+            actions.Add(new FloorNumberOnLevelAction(doc, elemsOnLevel, "КП_О_Этаж", 0, splitLevelChar));
+            actions.Add(new FloorNumberUnderLevelAction(doc, elemsUnderLevel, "КП_О_Этаж", 0, splitLevelChar));
+            actions.Add(new TypeOfWallAction(doc, walls, "LEVEL_Тип конструкции"));
+
             using (Transaction t = new Transaction(doc))
             {
-                t.Start("ABS Параметризация");
+                t.Start("LEVEL Параметризация КР");
 
                 Print("Параметризация элементов ↑", KPLN_Loader.Preferences.MessageType.Header);
 
-                List<ParamAction> actions = new List<ParamAction>();
-                actions.Add(new FloorNumberOnLevelAction(doc, elemsOnLevel, "ABS_Этаж", 1, splitLevelChar));
-                actions.Add(new FloorNumberUnderLevelAction(doc, elemsUnderLevel, "ABS_Этаж", 1, splitLevelChar));
-                actions.Add(new SectionMappingAction(doc, allElems, "ABS_Участок"));
-                actions.Add(new GetVolumeAction(doc, stairsElems, "ABS_Объем"));
                 foreach (ParamAction action in actions)
                 {
                     Print(action.name(), KPLN_Loader.Preferences.MessageType.Regular);

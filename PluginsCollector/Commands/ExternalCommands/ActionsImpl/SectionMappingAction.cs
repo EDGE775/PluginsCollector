@@ -27,7 +27,7 @@ namespace PluginsCollector.Commands.ExternalCommands
         public bool execute()
         {
             int counter = 0;
-            sectionName = doc.Title.Split('.')[0].Split('_').Skip(4).Aggregate((x, y) => x + "_" + y);
+            sectionName = doc.Title.Split('.')[0].Split('_').Skip(4).Reverse().Skip(3).Reverse().Aggregate((x, y) => x + "_" + y);
             foreach (Element elem in elems)
             {
                 Parameter targetSectionParam = elem.LookupParameter(sectionParam);

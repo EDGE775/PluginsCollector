@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using static KPLN_Loader.Output.Output;
 
 namespace PluginsCollector.Tools
 {
@@ -50,6 +51,27 @@ namespace PluginsCollector.Tools
                 }
             }
             return ingdConfigFile;
+        }
+        /// <summary>
+        ///   
+        /// </summary>
+        /// <param name="fileName">Имя файла настроек с раширением .ini</param>
+        /// <returns></returns>
+        public static string checkParametrizationSettings(string fileName)
+        {
+            string bimstarterFolder = "X:\\BIM\\5_Scripts\\bim-starter\\Config\\Parametrisation\\";
+            if (!Directory.Exists(bimstarterFolder))
+            {
+                Print("Папка настроек по адресу: \"X:\\BIM\\5_Scripts\\bim-starter\\Config\\Parametrisation\" не найдена!", KPLN_Loader.Preferences.MessageType.Error);
+                return null;
+            }
+            string сonfigFile = Path.Combine(bimstarterFolder, fileName);
+
+            if (!File.Exists(сonfigFile))
+            {
+                return null;
+            }
+            return сonfigFile;
         }
 
         private static string getLocalConfigFile()
