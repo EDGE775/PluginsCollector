@@ -89,6 +89,7 @@
     <Compile Include="Commands\ExecutableCommands\OverrideGraphicsByIdCommand.cs" />
     <Compile Include="Commands\ExternalCommands\ABSParamARCommand.cs" />
     <Compile Include="Commands\ExternalCommands\ABSParamKRCommand.cs" />
+    <Compile Include="Commands\ExternalCommands\ActionsImpl\WriteSectionAction.cs" />
     <Compile Include="Commands\ExternalCommands\ActionsImpl\OverrideAllViewsAction.cs" />
     <Compile Include="Commands\ExternalCommands\ActionsImpl\TypeOfWallAction.cs" />
     <Compile Include="Commands\ExternalCommands\ActionsImpl\StandartOverrideSingleViewAction.cs" />

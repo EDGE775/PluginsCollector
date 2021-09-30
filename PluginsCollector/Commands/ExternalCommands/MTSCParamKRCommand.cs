@@ -84,8 +84,9 @@ namespace PluginsCollector.Commands.ExternalCommands
 
             List<ParamAction> actions = new List<ParamAction>();
             actions.Add(new FloorNumberOnLevelAction(doc, allElems, "INGD_Номер этажа", 0, splitLevelChar));
-            actions.Add(new GroupOfConstrAction(doc, allElems, "INGD_Группа конструкции", "MTSC_config.txt"));
+            //actions.Add(new GroupOfConstrAction(doc, allElems, "INGD_Группа конструкции", "MTSC_config.txt"));
             actions.Add(new MarkMappingAction(doc, allElems, "INGD_Марка"));
+            actions.Add(new WriteSectionAction(doc, allElems, "Орг.ОсьБлок", "INGD_Секция", false));
 
             using (Transaction t = new Transaction(doc))
             {

@@ -125,14 +125,21 @@ namespace PluginsCollector.Commands.ExternalCommands
 
             using (Transaction t = new Transaction(doc))
             {
-                t.Start("ABS Параметризация");
+                t.Start("ABS Параметризация КР");
 
                 Print("Параметризация элементов ↑", KPLN_Loader.Preferences.MessageType.Header);
 
                 List<ParamAction> actions = new List<ParamAction>();
                 actions.Add(new FloorNumberOnLevelAction(doc, elemsOnLevel, "ABS_Этаж", 1, splitLevelChar));
                 actions.Add(new FloorNumberUnderLevelAction(doc, elemsUnderLevel, "ABS_Этаж", 1, splitLevelChar));
-                actions.Add(new SectionMappingAction(doc, allElems, "ABS_Участок"));
+                if (doc.Title.Contains("_AR_"))
+                {
+                    actions.Add(new SectionMappingAction(doc, allElems, "ABS_Участок"));
+                }
+                else if (doc.Title.Contains("_KG_"))
+                {
+                    actions.Add(new WriteSectionAction(doc, allElems, "Орг.ОсьБлок", "ABS_Участок", false));
+                }
                 actions.Add(new GetVolumeAction(doc, stairsElems, "ABS_Объем"));
                 foreach (ParamAction action in actions)
                 {

@@ -10,47 +10,37 @@ namespace PluginsCollector.Tools
 {
     public static class SettingsUtils
     {
-        public static string CheckOrCreateSettings()
+        public static string CheckOrCreateSettings(string file_name)
         {
-            string appdataFolder =
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string bimstarterFolder =
-                Path.Combine(appdataFolder, "bim-starter");
-            if (!Directory.Exists(bimstarterFolder))
+            //string appdataFolder =
+            //    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            //string bimstarterFolder =
+            //    Path.Combine(appdataFolder, "bim-starter");
+            //if (!Directory.Exists(bimstarterFolder))
+            //{
+            //    Directory.CreateDirectory(bimstarterFolder);
+            //}
+            //string configPath = Path.Combine(bimstarterFolder, "config.ini");
+            string serverSettingsPath = @"X:\BIM\5_Scripts\bim-starter\Config\Parametrisation";
+            if (!Directory.Exists(serverSettingsPath))
             {
-                Directory.CreateDirectory(bimstarterFolder);
-            }
-            string configPath = Path.Combine(bimstarterFolder, "config.ini");
-            string serverSettingsPath = "";
-            if (File.Exists(configPath))
-            {
-                serverSettingsPath = File.ReadAllLines(configPath)[0];
-            }
-            else
-            {
-                string sourceTxtFile = getLocalConfigFile();
-                return sourceTxtFile;
+                throw new Exception("Директории Parametrisation не существует!");
             }
 
-            string ingdConfigFolder = Path.Combine(serverSettingsPath, "IngradParametrisation");
-            if (!Directory.Exists(ingdConfigFolder))
-            {
-                Directory.CreateDirectory(ingdConfigFolder);
-            }
-            string ingdConfigFile = Path.Combine(ingdConfigFolder, "config.txt");
-            if (!File.Exists(ingdConfigFile))
+            string configFile = Path.Combine(serverSettingsPath, file_name);
+            if (!File.Exists(configFile))
             {
                 string sourceTxtFile = getLocalConfigFile();
                 try
                 {
-                    File.Copy(sourceTxtFile, ingdConfigFile);
+                    File.Copy(sourceTxtFile, configFile);
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("Не удалось скопировать " + sourceTxtFile + " в " + ingdConfigFile + ". " + ex.Message);
+                    throw new Exception("Не удалось скопировать " + sourceTxtFile + " в " + configFile + ". " + ex.Message);
                 }
             }
-            return ingdConfigFile;
+            return configFile;
         }
         /// <summary>
         ///   

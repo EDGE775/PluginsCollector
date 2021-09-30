@@ -32,14 +32,14 @@ namespace PluginsCollector.Commands.ExternalCommands
             int counter = 0;
             foreach (Element elem in elems)
             {
-                //заполняю номер этажа для элементов, находящихся НА уровне
+                //заполняю номер этажа для элементов, находящихся НАД уровне
                 Level baseLevel = LevelUtils.GetLevelOfElement(elem, doc);
                 if (baseLevel != null)
                 {
                     string floorNumber = LevelUtils.GetFloorNumberByUnderLevel(baseLevel, floorTextPosition, doc, splitChar);
                     if (floorNumber == null)
                     {
-                        Print(string.Format("Не найден уровень с уровнем выше, равным: {0} при обработке элемента: {1} c id: {2}", baseLevel.Name, elem.Name, elem.Id.IntegerValue), KPLN_Loader.Preferences.MessageType.Regular);
+                        Print(string.Format("Не найден уровень с уровнем выше, равным: {0} при обработке элемента: {1} c id: {2}. Для уровней необходимо заполнить параметр: На уровень выше", baseLevel.Name, elem.Name, elem.Id.IntegerValue), KPLN_Loader.Preferences.MessageType.Regular);
                         continue;
                     }
                     Parameter floor = elem.LookupParameter(floorNumberParamName);

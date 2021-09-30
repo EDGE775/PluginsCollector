@@ -20,7 +20,6 @@ namespace PluginsCollector.Commands.ExternalCommands
             int floorTextPosition = 0;
 
             Module.assembly = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            Print(Module.assembly, KPLN_Loader.Preferences.MessageType.Regular);
             string markParamName = "INGD_Марка";
             string widthParamName = "INGD_Ширина";
             string lengthParamName = "INGD_Длина";
@@ -28,8 +27,8 @@ namespace PluginsCollector.Commands.ExternalCommands
 
             Dictionary<string, string> marksBase = new Dictionary<string, string>();
 
-            string txtFile = SettingsUtils.CheckOrCreateSettings();
-            Print(txtFile, KPLN_Loader.Preferences.MessageType.Regular);
+            string txtFile = SettingsUtils.CheckOrCreateSettings("INGD_config.txt");
+            Print(string.Format("Для параметризации использован файл: {0}", txtFile), KPLN_Loader.Preferences.MessageType.Regular);
             if (!System.IO.File.Exists(txtFile))
             {
                 message = "Не найден файл " + txtFile;
@@ -113,14 +112,16 @@ namespace PluginsCollector.Commands.ExternalCommands
                             string markPrefix = splitmark[0];
                             if (!marksBase.ContainsKey(markPrefix))
                             {
-                                message = "Недопустимый префикс марки " + markPrefix + " у элемента id " + elem.Id.IntegerValue.ToString();
-                                return Result.Failed;
+                                Print(string.Format("Недопустимый префикс марки {0} у элемента с id {1}", markPrefix, elem.Id.IntegerValue.ToString()), KPLN_Loader.Preferences.MessageType.Warning);
                             }
-                            string group = marksBase[markPrefix];
-                            Parameter groupParam = elem.LookupParameter(paramNameGroupConstr);
-                            if (groupParam != null)
+                            else
                             {
-                                groupParam.Set(group);
+                                string group = marksBase[markPrefix];
+                                Parameter groupParam = elem.LookupParameter(paramNameGroupConstr);
+                                if (groupParam != null)
+                                {
+                                    groupParam.Set(group);
+                                }
                             }
                         }
                     }

@@ -55,11 +55,11 @@ namespace PluginsCollector.Commands.ExternalCommands
                     .Cast<ProjectInfo>()
                     .ToList()[0];
 
-                List<GlobalParameter> baseGlobalParams = GlobalParametersManager
-                    .GetAllGlobalParameters(baseDoc)
-                    .Select(x => baseDoc.GetElement(x) as GlobalParameter)
-                    .Where(x => x.GetDefinition().Name.Contains("Угол поворота Севера"))
-                    .ToList();
+                //List<GlobalParameter> baseGlobalParams = GlobalParametersManager
+                //    .GetAllGlobalParameters(baseDoc)
+                //    .Select(x => baseDoc.GetElement(x) as GlobalParameter)
+                //    .Where(x => x.GetDefinition().Name.Contains("Угол поворота Севера"))
+                //    .ToList();
 
                 List<Parameter> baseParameters = new List<Parameter>();
                 baseParameters.Add(baseInfo.LookupParameter("SHT_Абсолютная отметка"));
@@ -92,17 +92,17 @@ namespace PluginsCollector.Commands.ExternalCommands
                         }
                     }
 
-                    foreach (GlobalParameter parameter in baseGlobalParams)
-                    {
-                        if (copyingGlobalParams(parameter, currentDoc))
-                        {
-                            counter++;
-                        }
-                        else
-                        {
-                            falseCounter++;
-                        }
-                    }
+                    //foreach (GlobalParameter parameter in baseGlobalParams)
+                    //{
+                    //    if (copyingGlobalParams(parameter, currentDoc))
+                    //    {
+                    //        counter++;
+                    //    }
+                    //    else
+                    //    {
+                    //        falseCounter++;
+                    //    }
+                    //}
 
                     Print(string.Format("Скопировано параметров: {0}, не скопировано: {1}", counter, falseCounter), KPLN_Loader.Preferences.MessageType.Success);
                     t.Commit();
